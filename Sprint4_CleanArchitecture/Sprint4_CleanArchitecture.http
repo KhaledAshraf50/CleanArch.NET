@@ -1,0 +1,6 @@
+@Sprint4_CleanArchitecture_HostAddress = http://localhost:5189
+
+GET {{Sprint4_CleanArchitecture_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
