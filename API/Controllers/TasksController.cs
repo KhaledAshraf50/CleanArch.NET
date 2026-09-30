@@ -47,6 +47,21 @@ namespace API.Controllers
             if (!result) return NotFound();
             return NoContent();
         }
+        [HttpPatch("{Id:guid}/status")]
+        public async Task<IActionResult> UpdateStatus(Guid Id, Application.Features.Tasks.Commands.UpdateTaskStatus.UpdateTaskStatusCommand command)
+        {
+            if (Id != command.Id) return BadRequest("ID Mismatch");
+            try
+            {
+                var result = await _sender.Send(command);
+                if (!result) return NotFound();
+                return NoContent();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpDelete("{Id:guid}")]
         public async Task<IActionResult> Delete(Guid Id)
         {

@@ -18,6 +18,13 @@ namespace Application.Features.Tasks.Commands.CreateTask
         }
         public async Task<TaskDto> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
         {
+            // Task must belong to an existing (not deleted) Project
+            var project = await _unitOfWork.Projects.GetByIdAsync(request.ProjectId);
+            if (project == null)
+            {
+                throw new InvalidOperationException("Cannot create a task for a project that does not exist or was deleted.");
+            }
+
             var Task = new Task
             {
                 Title = request.Title,
@@ -27,6 +34,7 @@ namespace Application.Features.Tasks.Commands.CreateTask
                 Status = Domain.Enums.TaskStatus.Todo,
 
             };
+
             await _unitOfWork.Tasks.AddAsync(Task);
             await _unitOfWork.SaveChangesAsync();
             return new TaskDto

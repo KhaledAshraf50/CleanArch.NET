@@ -37,5 +37,29 @@ namespace API.Controllers
             var result = await _sender.Send(new GetProjectsQuery());
             return Ok(result);
         }
+        [HttpGet("{Id:guid}")]
+        public async Task<IActionResult> GetById(Guid Id)
+        {
+            var result = await _sender.Send(new Application.Features.Projects.Queries.GetProjectById.GetProjectByIdQuery(Id));
+            if (result == null) return NotFound();
+            return Ok(result);
+        }
+
+        [HttpPut("{Id:guid}")]
+        public async Task<IActionResult> Update(Guid Id, Application.Features.Projects.Commands.UpdateProject.UpdateProjectCommand command)
+        {
+            if (Id != command.Id) return BadRequest("ID Mismatch");
+            var result = await _sender.Send(command);
+            if (!result) return NotFound();
+            return NoContent();
+        }
+
+        [HttpDelete("{Id:guid}")]
+        public async Task<IActionResult> Delete(Guid Id)
+        {
+            var result = await _sender.Send(new Application.Features.Projects.Commands.DeleteProject.DeleteProjectCommand(Id));
+            if (!result) return NotFound();
+            return NoContent();
+        }
     }
 }

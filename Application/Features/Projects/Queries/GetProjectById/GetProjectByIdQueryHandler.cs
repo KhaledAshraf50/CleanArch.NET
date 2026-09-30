@@ -19,6 +19,7 @@ namespace Application.Features.Projects.Queries.GetProjectById
         public async Task<ProjectDto> Handle(GetProjectByIdQuery request, CancellationToken cancellationToken)
         {
             var project = await _unitOfWork.Projects.GetByIdAsync(request.Id);
+            if (project == null) return null;
 
             return new ProjectDto
             {

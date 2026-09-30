@@ -10,6 +10,7 @@ namespace Domain.Enums
     {
         Todo,
         InProgress,
-        Done
+        Completed,
+        Cancelled
     }
 }

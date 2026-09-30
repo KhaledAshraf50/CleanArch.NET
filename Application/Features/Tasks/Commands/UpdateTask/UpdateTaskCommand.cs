@@ -12,8 +12,7 @@ namespace Application.Features.Tasks.Commands.UpdateTask
         Guid Id,
         string Title,
         string? Description,
-        Domain.Enums.TaskStatus Status,
         DateTime? DueDate
-        ):IRequest<bool>;
+        ) : IRequest<bool>;
    
 }

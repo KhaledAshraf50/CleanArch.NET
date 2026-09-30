@@ -24,7 +24,6 @@ namespace Application.Features.Tasks.Commands.UpdateTask
 
             task.Title = request.Title;
             task.Description = request.Description;
-            task.Status = request.Status;
             task.DueDate = request.DueDate;
             task.UpdatedAt = DateTime.UtcNow;
 
