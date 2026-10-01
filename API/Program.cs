@@ -40,6 +40,9 @@ namespace API
 
             app.UseHttpsRedirection();
 
+            // Global exception handling
+            app.UseMiddleware<API.Middlewares.ExceptionHandlingMiddleware>();
+
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -80,7 +83,7 @@ namespace API
                 }
                 catch (Exception ex)
                 {
-                    // ignore startup seed errors
+                    throw new Exception("An error occurred while seeding roles and admin user.", ex);
                 }
             }
 

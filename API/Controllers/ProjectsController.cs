@@ -54,7 +54,11 @@ namespace API.Controllers
         {
             if (Id != command.Id) return BadRequest("ID Mismatch");
             var result = await _sender.Send(command);
-            if (!result) return NotFound();
+            if (!result.IsSuccess)
+            {
+                if (result.StatusCode.HasValue) return StatusCode(result.StatusCode.Value, new ProblemDetails { Title = result.Error, Status = result.StatusCode });
+                return BadRequest(result.Error);
+            }
             return NoContent();
         }
 
@@ -62,7 +66,11 @@ namespace API.Controllers
         public async Task<IActionResult> Delete(Guid Id)
         {
             var result = await _sender.Send(new Application.Features.Projects.Commands.DeleteProject.DeleteProjectCommand(Id));
-            if (!result) return NotFound();
+            if (!result.IsSuccess)
+            {
+                if (result.StatusCode.HasValue) return StatusCode(result.StatusCode.Value, new ProblemDetails { Title = result.Error, Status = result.StatusCode });
+                return BadRequest(result.Error);
+            }
             return NoContent();
         }
     }

@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Application.Features.Projects.Commands.UpdateProject
 {
-    public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand, bool>
+    public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand, Application.Common.Models.Result<bool>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserService _currentUser;
@@ -16,15 +16,15 @@ namespace Application.Features.Projects.Commands.UpdateProject
             _currentUser = currentUser;
         }
 
-        public async Task<bool> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
+        public async Task<Application.Common.Models.Result<bool>> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
         {
             var project = await _unitOfWork.Projects.GetByIdAsync(request.Id);
-            if (project == null) return false;
+            if (project == null) return Application.Common.Models.Result<bool>.Failure("Project not found", 404);
 
             // only owner or Admin can update
             var userId = _currentUser.UserId;
-            if (string.IsNullOrEmpty(userId)) return false;
-            if (project.OwnerId != userId && !_currentUser.IsInRole("Admin")) return false;
+            if (string.IsNullOrEmpty(userId)) return Application.Common.Models.Result<bool>.Failure("Unauthorized", 401);
+            if (project.OwnerId != userId && !_currentUser.IsInRole("Admin")) return Application.Common.Models.Result<bool>.Failure("Forbidden", 403);
 
             project.Name = request.Name;
             project.Description = request.Description;
@@ -32,7 +32,7 @@ namespace Application.Features.Projects.Commands.UpdateProject
 
             _unitOfWork.Projects.Update(project);
             await _unitOfWork.SaveChangesAsync();
-            return true;
+            return Application.Common.Models.Result<bool>.Success(true);
         }
     }
 }

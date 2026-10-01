@@ -13,6 +13,6 @@ namespace Application.Features.Tasks.Commands.UpdateTask
         string Title,
         string? Description,
         DateTime? DueDate
-        ) : IRequest<bool>;
+        ) : IRequest<Application.Common.Models.Result<bool>>;
    
 }

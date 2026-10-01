@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Tasks.Commands.UpdateTaskStatus
 {
-    public class UpdateTaskStatusCommandHandler : IRequestHandler<UpdateTaskStatusCommand, bool>
+    public class UpdateTaskStatusCommandHandler : IRequestHandler<UpdateTaskStatusCommand, Application.Common.Models.Result<bool>>
     {
         private readonly IUnitOfWork _unitOfWork;
         public UpdateTaskStatusCommandHandler(IUnitOfWork unitOfWork)
@@ -13,15 +13,15 @@ namespace Application.Features.Tasks.Commands.UpdateTaskStatus
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> Handle(UpdateTaskStatusCommand request, CancellationToken cancellationToken)
+        public async Task<Application.Common.Models.Result<bool>> Handle(UpdateTaskStatusCommand request, CancellationToken cancellationToken)
         {
             var task = await _unitOfWork.Tasks.GetByIdAsync(request.Id);
-            if (task == null) return false;
+            if (task == null) return Application.Common.Models.Result<bool>.Failure("Task not found", 404);
 
             var current = task.Status;
             var next = request.NewStatus;
 
-            if (current == next) return true; // no-opertion
+            if (current == next) return Application.Common.Models.Result<bool>.Success(true); // no-op
 
             // Allowed transitions:
             // Todo -> InProgress
@@ -46,7 +46,7 @@ namespace Application.Features.Tasks.Commands.UpdateTaskStatus
 
             if (!allowed)
             {
-                throw new InvalidOperationException($"Invalid status transition from {current} to {next}.");
+                return Application.Common.Models.Result<bool>.Failure($"Invalid status transition from {current} to {next}.", 409);
             }
 
             task.Status = next;
@@ -54,7 +54,7 @@ namespace Application.Features.Tasks.Commands.UpdateTaskStatus
 
             _unitOfWork.Tasks.Update(task);
             await _unitOfWork.SaveChangesAsync();
-            return true;
+            return Application.Common.Models.Result<bool>.Success(true);
         }
     }
 }
