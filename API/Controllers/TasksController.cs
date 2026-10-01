@@ -3,6 +3,7 @@ using Application.Features.Tasks.Commands.DeleteTask;
 using Application.Features.Tasks.Commands.UpdateTask;
 using Application.Features.Tasks.Queries.GetTaskById;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +19,7 @@ namespace API.Controllers
         {
             _sender = sender;
         }
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(CreateTaskCommand command)
         {

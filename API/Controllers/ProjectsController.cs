@@ -1,6 +1,7 @@
 ﻿using Application.Features.Projects.Commands.CreateProject;
 using Application.Features.Projects.Queries.GetProjects;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,13 +16,16 @@ namespace API.Controllers
         {
             _sender = sender;
         }
-        
+
+        [Authorize]
 
         [HttpPost]
         public async Task<IActionResult> Create(CreateProjectCommand command)
         {
             try
             {
+                // Ensure OwnerId is not supplied by client for security; handler will use current user when null
+                command = command with { OwnerId = command.OwnerId };
                 var result = await _sender.Send(command);
                 return Ok(result);
             }

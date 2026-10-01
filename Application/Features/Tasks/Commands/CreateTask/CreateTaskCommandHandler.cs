@@ -11,10 +11,12 @@ namespace Application.Features.Tasks.Commands.CreateTask
     public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, TaskDto>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly Application.Common.Interfaces.ICurrentUserService _currentUser;
 
-        public CreateTaskCommandHandler(IUnitOfWork unitOfWork)
+        public CreateTaskCommandHandler(IUnitOfWork unitOfWork, Application.Common.Interfaces.ICurrentUserService currentUser)
         {
             _unitOfWork = unitOfWork;
+            _currentUser = currentUser;
         }
         public async Task<TaskDto> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
         {

@@ -22,8 +22,7 @@ namespace Infrastructure
             });
             // Identity
             services.AddIdentity<Infrastructure.Identity.ApplicationUser, Microsoft.AspNetCore.Identity.IdentityRole>()
-                .AddEntityFrameworkStores<AppDbContext>()
-                .AddDefaultTokenProviders();
+                .AddEntityFrameworkStores<AppDbContext>();
 
             // JWT Authentication
             var jwtSection = configuration.GetSection("Jwt");
@@ -53,6 +52,8 @@ namespace Infrastructure
             });
 
             services.AddScoped<Application.Common.Interfaces.IAuthService, Infrastructure.Services.AuthService>();
+            services.AddHttpContextAccessor();
+            services.AddScoped<Application.Common.Interfaces.ICurrentUserService, Infrastructure.Services.CurrentUserService>();
             services.AddScoped(typeof(IGenericRepository<>),typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;

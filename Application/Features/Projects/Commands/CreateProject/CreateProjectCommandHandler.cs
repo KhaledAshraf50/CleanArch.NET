@@ -12,9 +12,11 @@ namespace Application.Features.Projects.Commands.CreateProject
     public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand, ProjectDto>
     {
         private readonly IUnitOfWork _unitOfWork;
-        public CreateProjectCommandHandler(IUnitOfWork unitOfWork)
+        private readonly Application.Common.Interfaces.ICurrentUserService _currentUser;
+        public CreateProjectCommandHandler(IUnitOfWork unitOfWork, Application.Common.Interfaces.ICurrentUserService currentUser)
         {
             _unitOfWork = unitOfWork;
+            _currentUser = currentUser;
         }
         public async Task<ProjectDto> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
         {
@@ -22,7 +24,7 @@ namespace Application.Features.Projects.Commands.CreateProject
             {
                 Name = request.Name,
                 Description = request.Description,
-                OwnerId = request.OwnerId,
+                OwnerId = request.OwnerId ?? _currentUser.UserId,
             };
             await _unitOfWork.Projects.AddAsync(project);
             await _unitOfWork.SaveChangesAsync();

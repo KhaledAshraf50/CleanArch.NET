@@ -2,6 +2,7 @@ using Application.Features.Comments.Commands.AddComment;
 using Application.Features.Comments.Commands.DeleteComment;
 using Application.Features.Comments.Queries.GetTaskComments;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -16,6 +17,7 @@ namespace API.Controllers
             _sender = sender;
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Add(AddCommentCommand command)
         {

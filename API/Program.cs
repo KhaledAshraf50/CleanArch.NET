@@ -40,7 +40,49 @@ namespace API
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            // Ensure roles exist and optional admin user
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var roleManager = services.GetRequiredService<Microsoft.AspNetCore.Identity.RoleManager<Microsoft.AspNetCore.Identity.IdentityRole>>();
+                    var userManager = services.GetRequiredService<Microsoft.AspNetCore.Identity.UserManager<Infrastructure.Identity.ApplicationUser>>();
+                    var config = services.GetRequiredService<IConfiguration>();
+                    var roles = new[] { "Admin", "User" };
+                    foreach (var role in roles)
+                    {
+                        var exists = roleManager.RoleExistsAsync(role).GetAwaiter().GetResult();
+                        if (!exists)
+                        {
+                            roleManager.CreateAsync(new Microsoft.AspNetCore.Identity.IdentityRole(role)).GetAwaiter().GetResult();
+                        }
+                    }
+
+                    var adminEmail = config.GetValue<string>("AdminUser:Email");
+                    var adminPassword = config.GetValue<string>("AdminUser:Password");
+                    if (!string.IsNullOrEmpty(adminEmail) && !string.IsNullOrEmpty(adminPassword))
+                    {
+                        var admin = userManager.FindByEmailAsync(adminEmail).GetAwaiter().GetResult();
+                        if (admin == null)
+                        {
+                            admin = new Infrastructure.Identity.ApplicationUser { UserName = adminEmail, Email = adminEmail };
+                            var result = userManager.CreateAsync(admin, adminPassword).GetAwaiter().GetResult();
+                            if (result.Succeeded)
+                            {
+                                userManager.AddToRoleAsync(admin, "Admin").GetAwaiter().GetResult();
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // ignore startup seed errors
+                }
+            }
 
 
             app.MapControllers();
