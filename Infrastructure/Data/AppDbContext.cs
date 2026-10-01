@@ -1,4 +1,6 @@
 ﻿using Domain.Entities;
+using Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,7 +11,7 @@ using Task = Domain.Entities.Task;
 
 namespace Infrastructure.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<ApplicationUser>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options): base(options)
         {
@@ -17,6 +19,7 @@ namespace Infrastructure.Data
         public DbSet<Project> projects { get; set; } 
         public DbSet<Task> tasks { get; set; } 
         public DbSet<Comment> comments { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

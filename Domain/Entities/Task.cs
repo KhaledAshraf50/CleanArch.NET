@@ -23,6 +23,9 @@ namespace Domain.Entities
         public Guid ProjectId { get; set; }
         public Project? Project { get; set; }
 
+        // Owner (Identity user id)
+        public string? OwnerId { get; set; }
+
         // Navigation Property
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
 

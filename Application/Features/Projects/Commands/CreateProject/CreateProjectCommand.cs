@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Application.Features.Projects.Commands.CreateProject
 {
-    public record CreateProjectCommand(string Name, string? Description) : IRequest<ProjectDto>;
+    public record CreateProjectCommand(string Name, string? Description, string? OwnerId) : IRequest<ProjectDto>;
 }

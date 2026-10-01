@@ -14,6 +14,7 @@ namespace Application.Features.Projects.Commands.CreateProject
         public string? Description { get; set; }
 
         public DateTime CreatedAt { get; set; }
+        public string? OwnerId { get; set; }
 
     }
 }

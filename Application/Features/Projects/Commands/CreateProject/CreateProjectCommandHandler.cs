@@ -22,6 +22,7 @@ namespace Application.Features.Projects.Commands.CreateProject
             {
                 Name = request.Name,
                 Description = request.Description,
+                OwnerId = request.OwnerId,
             };
             await _unitOfWork.Projects.AddAsync(project);
             await _unitOfWork.SaveChangesAsync();

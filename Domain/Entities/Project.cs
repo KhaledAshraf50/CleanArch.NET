@@ -11,6 +11,8 @@ namespace Domain.Entities
     {
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
+        // Owner (Identity user id)
+        public string? OwnerId { get; set; }
 
         // Navigation property for related tasks
         public ICollection<Task> Tasks { get; set; } = new List<Task>();
